@@ -1,10 +1,13 @@
-
-
 with open("input.txt") as f:
     content = f.readlines()
 
+print(content)
+depth = int(content[0])
+increase = 0
+
 for v1 in content:
-    for v2 in content:
-        if int(v1) + int(v2) == 2020:
-            print(v1, v2, (int(v1)*int(v2)))
-    
+    if int(v1) > depth:
+        increase += 1
+    depth = int(v1)
+
+print(increase)
