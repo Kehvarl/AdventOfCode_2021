@@ -5,6 +5,7 @@ __pycache__/
 
 venv/
 
+*input.txt
 # C extensions
 *.so
 
