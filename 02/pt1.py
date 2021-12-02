@@ -2,8 +2,20 @@
 
 with open("input.txt") as f:
     content = f.readlines()
+    #content = [int(x) for x in f.readlines()]
 
-for v1 in content:
-    for v2 in content:
-        if int(v1) + int(v2) == 2020:
-            print(v1, v2, (int(v1)*int(v2)))
+pos = 0
+depth = 0
+
+for line in content:
+    direction, amount = line.split()
+    if direction == "up":
+        depth -= int(amount)
+    elif direction == "down":
+        depth += int(amount)
+    elif direction == "forward":
+        pos += int(amount)
+
+print(pos)
+print(depth)
+print(pos * depth)
