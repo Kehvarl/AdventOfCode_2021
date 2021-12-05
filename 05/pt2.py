@@ -1,4 +1,3 @@
-from bresenham import bresenham
 
 with open("input.txt") as f:
     content = f.readlines()
@@ -23,8 +22,20 @@ def plot(x, y):
 
 for line in segments:
     sx, sy, ex, ey = line
-    for cell in bresenham(sx, sy, ex, ey):
-        plot(cell[0], cell[1])
+    x, y = sx, sy
+    while True:
+        plot(x, y)
+        if (x, y) == (ex, ey):
+            break
+        if ex > sx:
+            x += 1
+        elif ex < sx:
+            x -= 1
+        if ey > sy:
+            y += 1
+        elif ey < sy:
+            y -= 1
+
 
 sum = 0
 for i in grid:
