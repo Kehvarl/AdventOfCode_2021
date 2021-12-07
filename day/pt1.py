@@ -1,4 +1,5 @@
-
+from collections import defaultdict
+from pprint import pprint
 
 with open("input.txt") as f:
     content = f.readlines()
