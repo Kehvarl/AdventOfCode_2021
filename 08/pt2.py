@@ -1,7 +1,7 @@
 from collections import defaultdict
 from pprint import pprint
 
-with open("test1.txt") as f:
+with open("input.txt") as f:
     content = f.readlines()
     #content = [int(x) for x in f.readlines()]
 
@@ -30,7 +30,7 @@ segment_map = {
 for s in segment_map:
     segment_map[s].sort()
 
-
+sum = 0
 for line in content:
     mapping = {}
     letter_map = {}
@@ -40,20 +40,57 @@ for line in content:
 
     for i in input:
         if len(i) in unique_segments:
-            mapping[unique_segments[len(i)]] = sorted(list(i))
+            mapping[unique_segments[len(i)]] = set(list(i))
+
+    for i in input:
+        if len(i) == 6:
+            # 6 9 0 6
+            # 9     |4
+            # 0     |1
+            # 6     !1
+            if mapping[4].issubset(set(list(i))):
+                mapping[9] = set(list(i))
+            elif mapping[1].issubset(set(list(i))):
+                mapping[0] = set(list(i))
+            elif not mapping[1].issubset(set(list(i))):
+                mapping[6] = set(list(i))
+
+    for i in input:
+        if len(i) == 5:
+            # 2 3 5 5
+            # 2     !9
+            # 3     |9
+            # 5     |6
+            if set(list(i)).issubset(mapping[6]):
+                mapping[5] = set(list(i))
+            elif set(list(i)).issubset(mapping[9]):
+                mapping[3] = set(list(i))
+            elif not set(list(i)).issubset(mapping[9]):
+                mapping[2] = set(list(i))
 
     print(mapping)
+    out = ""
+    for o in output:
+        so = set(list(o))
+        for m in mapping:
+            if so == mapping[m]:
+                out += str(m)
 
-    for k, m in mapping.items():
-        for l in m:
-            if l not in letter_map:
-                letter_map[l] = set()
-            letter_map[l].add(l)
+    sum += int(out)
+    print(out)
 
-# 1:       (top-right, bottom-right)
-# 7 and 1: top
-# 4 and 1: (top-left, center)
-# 4 and 8: (bottom-left, bottom), top-left, center
+print(sum)
 
-# 3: 7 and either letter from 4
+# 1     2
+# 4     4
+# 7     3
+# 8     7
+# 6 9 0 6
+# 9     |4
+# 0     |1
+# 6     !1
+# 2 3 5 5
+# 2     !9
+# 3     |1
+# 5     |6
 
