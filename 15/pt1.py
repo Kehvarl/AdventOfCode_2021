@@ -1,7 +1,7 @@
 from collections import defaultdict
 from pprint import pprint
 
-with open("test.txt") as f:
+with open("input.txt") as f:
     content = f.readlines()
     # content = [int(x) for x in f.readlines()]
 
@@ -43,7 +43,7 @@ while True:
         if (nx, ny) in pathcost and pathcost[(nx, ny)] <= newcost:
             continue
         pathcost[(nx, ny)] = newcost
-        queue.append((newcost, ny, nx))
+        queue.append((newcost, nx, ny))
     queue = sorted(queue)
 
 
