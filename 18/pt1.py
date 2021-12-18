@@ -1,42 +1,95 @@
+import math
 from collections import defaultdict
 from pprint import pprint
 
-with open("test1.txt") as f:
+with open("input.txt") as f:
     content = f.readlines()
 
-
-def parse(s):
-    def parse_helper(level=0):
-        try:
-            token = next(tokens)
-        except StopIteration:
-            if level:
-                raise Exception('Missing close paren')
-            else:
-                return []
-        if token == ']':
-            if not level:
-                raise Exception('Missing open paren')
-            else:
-                return []
-        elif token == '[':
-            return [parse_helper(level+1)] + parse_helper(level)
-        elif token == ',':
-            return parse_helper(level)
-        else:
-            return [int(token)] + parse_helper(level)
-    tokens = iter(s)
-    return parse_helper()
+DIGITS = '0123456789'
 
 
-def explode(number, level=0):
-    a, b = number
-    if isinstance(a, list):
-        a = explode(a, level + 1)
-    if isinstance(b, list):
-        b = explode(b, level + 1)
-    return a, b
+def try_explode(num):
+    num_str = str(num).replace(' ', '')
+    depth = 0
+    for idx, c in enumerate(num_str):
+        if c == '[':
+            depth += 1
+            if depth == 5:
+                # Explode!
+                end_idx = num_str.find(']', idx)
+                a, b = list(map(int, num_str[idx+1:end_idx].split(',')))
+                left = num_str[:idx]
+                for lidx in range(len(left)-1, -1, -1):
+                    c = left[lidx]
+                    if c in DIGITS:
+                        term = max(i for i in range(lidx)
+                                   if left[i] not in DIGITS)
+                        val = int(left[term+1:lidx+1])
+                        val += a
+                        left = left[:term+1] + str(val) + left[lidx+1:]
+                        break
+                mid = '0'
+                right = num_str[end_idx+1:]
+                for ridx, c in enumerate(right):
+                    if c in DIGITS:
+                        term = min(i for i in range(ridx+1, len(right))
+                                   if right[i] not in DIGITS)
+                        val = int(right[ridx:term])
+                        val += b
+                        right = right[:ridx] + str(val) + right[term:]
+                        break
+                return eval(left + mid + right)
+        elif c == ']':
+            depth -= 1
+    return None
 
 
-sf = parse("[[[[[9,8],1],2],3],4]")
-print(explode(sf[0]))
+def split(number):
+    if isinstance(number, list):
+        a, b = number
+        a1 = split(a)
+        if a1 is not None:
+            return [a1, b]
+        b1 = split(b)
+        if b1 is not None:
+            return [a, b1]
+        return None
+    if number > 9:
+        a = math.floor(number/2)
+        b = math.ceil(number/2)
+        return [a, b]
+    return None
+
+
+def reduce(number):
+    while True:
+        test = try_explode(number)
+        if test is not None:
+            number = test
+            continue
+
+        test = split(number)
+        if test is not None:
+            number = test
+            continue
+        return number
+
+
+def magnitude(x):
+    if isinstance(x, int):
+        return x
+    return 3 * magnitude(x[0]) + 2 * magnitude(x[1])
+
+
+nums = []
+for line in content:
+    num = eval(line)
+    nums.append(num)
+
+left = nums[0]
+for num in nums[1:]:
+    num = reduce(num)
+    left = reduce([left, num])
+
+print(magnitude(left))
+print(left)
