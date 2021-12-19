@@ -1,11 +1,27 @@
 from collections import defaultdict
 from pprint import pprint
 
-with open("input.txt") as f:
+with open("test.txt") as f:
     content = f.readlines()
-    #content = [int(x) for x in f.readlines()]
 
-for v1 in content:
-    for v2 in content:
-        if int(v1) + int(v2) == 2020:
-            print(v1, v2, (int(v1)*int(v2)))
+scanners = {}
+current = None
+for line in content:
+    line = line.strip()
+    if line[0:3] == '---':
+        _, n = line.strip('---').strip().split(' ')
+        current = int(n)
+        scanners[current] = defaultdict(int)
+    elif line.strip() == '':
+        continue
+    else:
+        x, y, z = line.strip().split(',')
+        x = int(x)
+        y = int(y)
+        z = int(z)
+        scanners[current][(x, y, z)] = 1
+
+
+for s in scanners:
+    print(scanners[s])
+
